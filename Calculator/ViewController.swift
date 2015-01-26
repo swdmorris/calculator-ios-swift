@@ -8,18 +8,71 @@
 
 import UIKit
 
-class ViewController: UIViewController {
+class ViewController: UIViewController
+{
+    @IBOutlet weak var displayLabel: UILabel!
+    
+    var userIsInTheMiddleOfTypingANumber = false
 
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        // Do any additional setup after loading the view, typically from a nib.
+    @IBAction func appendDigit(sender: UIButton) {
+        let digit = sender.currentTitle!
+        if userIsInTheMiddleOfTypingANumber {
+            displayLabel.text = displayLabel.text! + digit
+        } else {
+            displayLabel.text = digit
+            userIsInTheMiddleOfTypingANumber = true
+        }
+        println("digit = \(digit)")
     }
-
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
+    @IBAction func operateButtonPressed(sender: UIButton)
+    {
+        let operation = sender.currentTitle!
+        if userIsInTheMiddleOfTypingANumber {
+            enterButtonPressed()
+        }
+        
+        switch operation {
+        case "✕": performOperation({ $0 * $1 })
+        case "+": performOperation({ $0 + $1 })
+        case "-": performOperation({ $1 - $0 })
+        case "÷": performOperation({ $1 / $0 })
+        case "√": performOperation({ sqrt($0) })
+        default: break
+        }
     }
-
-
+    
+    func performOperation(operation: (Double, Double) -> Double) {
+        if operandStack.count >= 2 {
+            displayValue = operation(operandStack.removeLast(), operandStack.removeLast())
+            enterButtonPressed()
+        }
+    }
+    
+    func performOperation(operation: Double -> Double) {
+        if operandStack.count >= 1 {
+            displayValue = operation(operandStack.removeLast())
+            enterButtonPressed()
+        }
+    }
+    
+    var operandStack = Array<Double>()
+    
+    @IBAction func enterButtonPressed()
+    {
+        userIsInTheMiddleOfTypingANumber = false
+        operandStack.append(displayValue)
+        println("Operand Stack = \(operandStack)")
+    }
+    
+    var displayValue: Double {
+        get {
+            return (displayLabel.text! as NSString).doubleValue
+        }
+        
+        set {
+            displayLabel.text = "\(newValue)"
+            userIsInTheMiddleOfTypingANumber = false
+        }
+    }
 }
 
