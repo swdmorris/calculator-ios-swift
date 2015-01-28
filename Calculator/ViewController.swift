@@ -11,6 +11,7 @@ import UIKit
 class ViewController: UIViewController
 {
     @IBOutlet weak var displayLabel: UILabel!
+    @IBOutlet weak var historyLabel: UILabel!
     
     var userIsInTheMiddleOfTypingANumber = false
 
@@ -33,6 +34,7 @@ class ViewController: UIViewController
     @IBAction func operateButtonPressed(sender: UIButton)
     {
         let operation = sender.currentTitle!
+        historyLabel.text = "\(historyLabel.text!) \(operation)"
         if userIsInTheMiddleOfTypingANumber {
             enterButtonPressed()
         }
@@ -70,6 +72,7 @@ class ViewController: UIViewController
         userIsInTheMiddleOfTypingANumber = false
         operandStack.append(displayValue)
         println("Operand Stack = \(operandStack)")
+        historyLabel.text = "\(historyLabel.text!) \(displayValue) ⏎"
     }
     
     var displayValue: Double {
