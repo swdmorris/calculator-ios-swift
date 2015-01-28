@@ -85,5 +85,15 @@ class ViewController: UIViewController
             userIsInTheMiddleOfTypingANumber = false
         }
     }
+    
+    @IBAction func clearButtonPressed()
+    {
+        // reset all outlets and local vars
+        operandStack.removeAll(keepCapacity: true)
+        displayLabel.text = "0"
+        userIsInTheMiddleOfTypingANumber = false
+        historyLabel.text = ""
+    }
+    
 }
 
