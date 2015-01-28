@@ -17,7 +17,12 @@ class ViewController: UIViewController
     @IBAction func appendDigit(sender: UIButton) {
         let digit = sender.currentTitle!
         if userIsInTheMiddleOfTypingANumber {
-            displayLabel.text = displayLabel.text! + digit
+            if digit == "." && displayLabel.text!.rangeOfString(".") != nil {
+                // if digit is decimal point and number already has decimal, don't allow it to be added
+                println("tried to add decimal to number with decimal already")
+            } else {
+                displayLabel.text = displayLabel.text! + digit
+            }
         } else {
             displayLabel.text = digit
             userIsInTheMiddleOfTypingANumber = true
