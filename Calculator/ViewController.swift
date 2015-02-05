@@ -41,6 +41,8 @@ class ViewController: UIViewController
             if let result = brain.performOperation(operation) {
                 historyLabel.text = "\(historyLabel.text!) \(operation)"
                 displayValue = result
+            } else {
+                displayValue = 0
             }
         }
         
