@@ -14,7 +14,8 @@ class ViewController: UIViewController
     @IBOutlet weak var historyLabel: UILabel!
     
     var userIsInTheMiddleOfTypingANumber = false
-
+    var brain = CalculatorBrain()
+    
     @IBAction func appendDigit(sender: UIButton) {
         let digit = sender.currentTitle!
         if userIsInTheMiddleOfTypingANumber {
@@ -33,46 +34,27 @@ class ViewController: UIViewController
     
     @IBAction func operateButtonPressed(sender: UIButton)
     {
-        let operation = sender.currentTitle!
-        historyLabel.text = "\(historyLabel.text!) \(operation)"
         if userIsInTheMiddleOfTypingANumber {
             enterButtonPressed()
         }
+        if let operation = sender.currentTitle {
+            if let result = brain.performOperation(operation) {
+                historyLabel.text = "\(historyLabel.text!) \(operation)"
+                displayValue = result
+            }
+        }
         
-        switch operation {
-        case "✕": performOperation({ $0 * $1 })
-        case "+": performOperation({ $0 + $1 })
-        case "-": performOperation({ $1 - $0 })
-        case "÷": performOperation({ $1 / $0 })
-        case "√": performOperation({ sqrt($0) })
-        case "sin": performOperation({ sin($0) })
-        case "cos": performOperation({ cos($0) })
-        default: break
-        }
     }
-    
-    func performOperation(operation: (Double, Double) -> Double) {
-        if operandStack.count >= 2 {
-            displayValue = operation(operandStack.removeLast(), operandStack.removeLast())
-            enterButtonPressed()
-        }
-    }
-    
-    func performOperation(operation: Double -> Double) {
-        if operandStack.count >= 1 {
-            displayValue = operation(operandStack.removeLast())
-            enterButtonPressed()
-        }
-    }
-    
-    var operandStack = Array<Double>()
     
     @IBAction func enterButtonPressed()
     {
         userIsInTheMiddleOfTypingANumber = false
-        operandStack.append(displayValue)
-        println("Operand Stack = \(operandStack)")
-        historyLabel.text = "\(historyLabel.text!) \(displayValue) ⏎"
+        if let result = brain.pushOperand(displayValue) {
+            historyLabel.text = "\(historyLabel.text!) \(displayValue) ⏎"
+            displayValue = result
+        } else {
+            displayValue = 0
+        }
     }
     
     var displayValue: Double {
@@ -89,7 +71,7 @@ class ViewController: UIViewController
     @IBAction func clearButtonPressed()
     {
         // reset all outlets and local vars
-        operandStack.removeAll(keepCapacity: true)
+        brain.clear()
         displayLabel.text = "0"
         userIsInTheMiddleOfTypingANumber = false
         historyLabel.text = ""
